@@ -7,6 +7,8 @@ import json
 import os
 import sys
 
+import usb_util_windows
+
 class SidebarFrame(ctk.CTkFrame):
     def __init__(self, master, app_instance, **kwargs):#Widget Placement
         super().__init__(master, width=140, corner_radius=0, **kwargs)
@@ -225,6 +227,14 @@ class App(ctk.CTk):
             #If the last part of the serial number begins with a "-" followed by a single digit and ends with "YX", it is a Tundra labs Super Wireless Dongle
             return "Tundra"
         else:   #Other dongles that are not identifiable (vive HMD or general nrf24 dongles)
+            try:
+                hmds = list(usb_util_windows.find_hmd())
+                for hmd in hmds:
+                    dongle_serials = hmd.get_dongle_serials()
+                    if serial_number in dongle_serials:
+                        return hmd.__class__.__name__
+            except Exception as e:
+                print(e, file=sys.stderr)
             return "Dongle" 
 
     def get_exe_path(self):#Get exe path
