@@ -26,12 +26,12 @@ jobs:
       - run: task dist
       - uses: actions/upload-artifact@v4
         with:
-          path: dist/main.exe
+          path: dist/WatchmanPairingAssistant.exe
           name: executable
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          name: ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
-          artifacts: dist/main.exe
+          artifacts: dist/WatchmanPairingAssistant.exe

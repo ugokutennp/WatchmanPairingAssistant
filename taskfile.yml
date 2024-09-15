@@ -7,12 +7,12 @@ tasks:
   run:
     deps: [dist]
     cmds:
-      - dist/main.exe
+      - dist/WatchmanPairingAssistant.exe
   dist:
     cmds:
       - pip install pyinstaller
       - pip install -r requirements.txt
-      - pyinstaller --onefile --windowed --icon=resources/icon.ico source/main.py
+      - pyinstaller --onefile --windowed --icon=resources/icon.ico --name WatchmanPairingAssistant source/main.py
   clean:
     platforms:
       - windows
