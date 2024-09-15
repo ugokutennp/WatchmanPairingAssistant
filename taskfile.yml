@@ -11,6 +11,7 @@ tasks:
   dist:
     cmds:
       - pip install pyinstaller
+      - pip install -r requirements.txt
       - pyinstaller --onefile --windowed --icon=resources/icon.ico source/main.py
   clean:
     platforms:
