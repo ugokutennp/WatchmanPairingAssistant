@@ -1,2 +1,6 @@
 /source/resources
 /.idea
+# Files created by pyinstaller
+/main.spec
+/build
+/dist
