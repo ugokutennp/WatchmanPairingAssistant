@@ -79,7 +79,7 @@ class UsbTreeItem:
     def get_hmd_root_depth(self) -> Optional[int]:
         if self.device.idVendor == 0x0BB4 and self.device.idProduct == 0x0309:
             return 3
-        if self.device.idVendor == 0x35BD and self.device.idProduct == 0x0101:
+        if self.product in ["Beyond", "Index HMD"]:
             return 2
 
     def find_hmd(self) -> Optional['ViveHMD']:
