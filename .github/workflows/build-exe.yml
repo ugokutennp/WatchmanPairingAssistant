@@ -1,0 +1,37 @@
+name: "Build Executable (Windows)"
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-exe:
+    runs-on: [ windows-latest ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install Task
+        uses: arduino/setup-task@v2
+      - run: task dist
+      - uses: actions/upload-artifact@v4
+        with:
+          path: dist/WatchmanPairingAssistant.exe
+          name: executable
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+          artifacts: dist/WatchmanPairingAssistant.exe

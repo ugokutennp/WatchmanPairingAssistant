@@ -7,6 +7,8 @@ import json
 import os
 import sys
 
+import usb_util_windows
+
 class SidebarFrame(ctk.CTkFrame):
     def __init__(self, master, app_instance, **kwargs):#Widget Placement
         super().__init__(master, width=140, corner_radius=0, **kwargs)
@@ -215,6 +217,16 @@ class App(ctk.CTk):
         return lines
     
     def get_device_name(self, serial_number):#Function to determine device name from serial
+        try:
+            hmds = list(usb_util_windows.find_hmd())
+            for hmd in hmds:
+                dongle_serials = hmd.get_dongle_serials()
+                if serial_number in dongle_serials:
+                    self.insert_log(f"Detected {serial_number} as dongle of headset {hmd.get_display_name()}")
+                    return hmd.get_display_name()
+            self.insert_log(f"Detected {serial_number} as dongle")
+        except Exception as e:
+            self.insert_log(str(e))
         if serial_number.endswith(("LYM", "RYB")):  #Dongle with built-in IndexHMD, which may have "LYM" or "RYB" at the end of the serial number
             return "IndexHMD"
         elif serial_number.endswith(("LYX")):   #Dongles made with Index firmware when the serial number ends with "LYX"
@@ -225,7 +237,7 @@ class App(ctk.CTk):
             #If the last part of the serial number begins with a "-" followed by a single digit and ends with "YX", it is a Tundra labs Super Wireless Dongle
             return "Tundra"
         else:   #Other dongles that are not identifiable (vive HMD or general nrf24 dongles)
-            return "Dongle" 
+            return "Dongle"
 
     def get_exe_path(self):#Get exe path
         config = self.load_config()

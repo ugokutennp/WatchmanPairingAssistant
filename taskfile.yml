@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  run_dev:
+    cmds:
+      - python source/main.py
+  run:
+    deps: [dist]
+    cmds:
+      - dist/WatchmanPairingAssistant.exe
+  dist:
+    cmds:
+      - pip install pyinstaller
+      - pip install -r requirements.txt
+      - pyinstaller --onefile --windowed --icon=resources/icon.ico --name WatchmanPairingAssistant source/main.py
+  clean:
+    platforms:
+      - windows
+    cmds:
+      - cmd /c "rmdir /s /q dist"
+      - cmd /c "rmdir /s /q build"
+      - cmd /c "del /q main.spec"

@@ -1,0 +1,3 @@
+customtkinter~=5.2.2
+libusb-package~=1.0.26.2
+pyusb~=1.2.1
