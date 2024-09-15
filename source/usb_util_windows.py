@@ -41,8 +41,11 @@ class UsbTreeItem:
     def is_hub(self) -> bool:
         return self.device.bDeviceClass == usb.CLASS_HUB
 
+    def is_vive_dongle(self) -> bool:
+        return self.device.idVendor == 0x28DE and self.device.idProduct in [0x2101, 0x2102]
+
     def is_dongle(self) -> bool:
-        return self.device.idVendor == 0x28DE and self.device.idProduct == 0x2101
+        return self.is_vive_dongle()
 
     def pp_class(self):
         cls = self.device.bDeviceClass
@@ -76,6 +79,8 @@ class UsbTreeItem:
     def get_hmd_root_depth(self) -> Optional[int]:
         if self.device.idVendor == 0x0BB4 and self.device.idProduct == 0x0309:
             return 3
+        if self.device.idVendor == 0x35BD and self.device.idProduct == 0x0101:
+            return 2
 
     def find_hmd(self) -> Optional['ViveHMD']:
         if len(self.children.items()) > 0:
@@ -89,14 +94,15 @@ class UsbTreeItem:
             device = self
             for _ in range(0, required_depth):
                 device = device.parent
-            return ViveHMD(device)
+            return ViveHMD(device, self)
 
     def __repr__(self):
         return self.render()
 
 
 class ViveHMD:
-    def __init__(self, device: UsbTreeItem):
+    def __init__(self, device: UsbTreeItem, idDevice: UsbTreeItem):
+        self.idDevice = idDevice
         self.device = device
 
     def get_attached_dongles(self) -> list[UsbTreeItem]:
@@ -104,6 +110,9 @@ class ViveHMD:
 
     def get_dongle_serials(self) -> list[str]:
         return [device.serial for device in self.get_attached_dongles()]
+
+    def get_display_name(self):
+        return f"{self.idDevice.vendor} {self.idDevice.product}"
 
 
 def __create_device_tree(devices: list[usb.core.Device]) -> dict:
